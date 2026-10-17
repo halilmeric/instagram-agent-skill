@@ -1,5 +1,24 @@
 # The Instagram agent skill
 
+## 🇹🇷 Türkçe destek
+
+Instagram ajan skill paketinin Türkçe destekli ilk sürümü. `/ig-reel`, `/ig-human` ve `/ig-viral` Türkçe metni kendiliğinden algılıyor ve doğru ölçüyor. İngilizce davranış orijinalle birebir aynı.
+
+**Neler var**
+- **Hook puanı ve zamanlama heceyle:** Türkçede süre kelimeden değil heceden hesaplanıyor; "18.000 TL" okunduğu gibi sayılıyor; kelime eşleşmesi eklere duyarlı.
+- **26 hook formülünün tamamı Türkçe:** ad, şablon, örnek, ekran yazısı, ne için iyi olduğu ve tuzağı. Örnekler çeviri değil, Türkçe konuşulduğu gibi yazıldı.
+- **Türkçe "yapay zeka kokan kelime" sözlüğü:** 99 kalıp otomatik değişiyor ("son derece" → "çok"), 46 kök öneriyle işaretleniyor ("gerçekleştirdim" → "yaptım"), 19 yapı kalıbı uyarı veriyor ("Sonuç mu?", "-mektedir").
+- **Türkçe kılavuz:** [README.tr.md](https://github.com/halilmeric/instagram-agent-skill/blob/main/README.tr.md)
+
+**Kurulum:** Claude'a şunu yapıştır:
+```
+https://github.com/halilmeric/instagram-agent-skill
+
+Bu skill'i kur, sonra /ig-reel çalışıyor mu kontrol et.
+```
+
+Orijinal paket: [Jakeschincariol/instagram-agent-skill](https://github.com/Jakeschincariol/instagram-agent-skill) (MIT).
+
 > **🇹🇷 Türkçe destekli fork.** Bu sürüm, [Jake Schincariol'un orijinal
 > deposunun](https://github.com/Jakeschincariol/instagram-agent-skill) Türkçeye
 > uyarlanmış hâlidir. `/ig-reel`, `/ig-human` ve `/ig-viral` Türkçe metni
