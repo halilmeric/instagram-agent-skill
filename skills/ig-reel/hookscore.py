@@ -28,13 +28,24 @@ Usage
   python3 hookscore.py --hook "I lost $18,000 on one missing contract."
   pbpaste | python3 hookscore.py -
   python3 hookscore.py hooks.txt --json
+  python3 hookscore.py hooks.txt --lang tr     # Türkçe (varsayılan: otomatik)
+
+Türkçe: dil otomatik algılanır. Uzunluk heceyle ölçülür (Türkçede kelime
+sayısı yanıltır), kelime eşlemesi eklere duyarlıdır, olumsuzluk fiil içinden
+yakalanır ve çıktı Türkçedir. Puanlama mantığı ve ağırlıklar aynıdır.
 """
 
 import argparse
 import json
+import os
 import re
 import statistics
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import trlang  # noqa: E402
+
+TR_SPS = 5.5        # Türkçe konuşma hızı, hece/saniye
 
 WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
 NUMBER_RE = re.compile(
@@ -213,15 +224,154 @@ def check_address(text):
 CHECKS = ["LENGTH", "SPECIFICITY", "STAKES", "FRONTLOAD", "ADDRESS"]
 
 
-def run(text):
-    results = {
-        "LENGTH": check_length(text),
-        "SPECIFICITY": check_specificity(text),
-        "STAKES": check_stakes(text),
-        "FRONTLOAD": check_frontload(text),
-        "ADDRESS": check_address(text),
-    }
-    flags = [msg for pattern, msg in DEALBREAKERS if pattern.search(text)]
+# ---------------------------------------------------------------- Türkçe ---
+
+def tr_length(text):
+    """Hook başparmak hareket etmeden oturmalı. Türkçede heceyle ölçülür."""
+    syl = trlang.syllables(text)
+    secs = syl / TR_SPS
+    chars = len(text.strip())
+    if 10 <= syl <= 24:
+        score = 100.0
+    elif syl < 10:
+        score = clamp(100 - (10 - syl) * 10)
+    else:
+        score = clamp(100 - (syl - 24) * 5.5)
+    if chars > 60:                       # iki satır büyük ekran yazısı
+        score -= 12
+    n = len(trlang.words(text))
+    return clamp(score), (f"{syl} hece, {n} kelime, {chars} karakter, "
+                          f"~{secs:.1f}sn (hedef 10-24 hece)")
+
+
+def tr_specificity(text):
+    """Tek somut şey üç soyut şeyden iyidir."""
+    nums, propers, spoken = trlang.concrete(text)
+    hits = len(nums) + len(propers) + len(spoken)
+    score = 15.0 if hits == 0 else clamp(45 + hits * 30)
+    found = ", ".join(nums[:2] + sorted(propers)[:2] + [trlang.base(w) for w in spoken[:2]])
+    return score, (f"{hits} somut işaret" + (f": {found}" if found else
+                   " - sayı yok, isim yok, kontrol edilebilir hiçbir şey yok"))
+
+
+def tr_stakes(text):
+    """Gerilim, bedel, olumsuzluk. İzleyicinin kaybedebileceği bir şey."""
+    w = trlang.words(text)
+    markers = sorted({trlang.base(x) for x in w if trlang.matches(x, trlang.STAKES)})
+    if any(trlang.NEGATION_RE.search(trlang.base(x)) for x in w):
+        markers.append("olumsuzluk")
+    phrase = trlang.STAKE_PHRASES_RE.search(text)
+    if phrase:
+        markers.append(phrase.group(0).strip().lower())
+    if re.search(r"[₺$€]\s?\d|\d\s?(?:₺|tl\b|lira)", text, re.IGNORECASE):
+        markers.append("bir fiyat")
+    n = len(markers)
+    score = {0: 20.0, 1: 70.0}.get(n, 100.0)
+    detail = f"{n} gerilim işareti" + (f": {', '.join(markers[:4])}" if markers else
+                                        " - bu cümlede ortada hiçbir şey yok")
+    return clamp(score), detail
+
+
+def tr_is_payload(token, i):
+    return (trlang.matches(token, trlang.STAKES)
+            or trlang.matches(token, trlang.SPOKEN_NUMBERS)
+            or trlang.matches(token, trlang.MONEY_WORDS)
+            or bool(re.match(r"[\d$₺€%]", token))
+            or bool(trlang.NEGATION_RE.search(trlang.base(token)))
+            or (i and bool(re.match(rf"[{trlang.UPPER}][{trlang.LOWER}]{{2,}}", token))))
+
+
+def tr_frontload(text):
+    """İlginç kelime dokuzuncu sırada olamaz."""
+    w = trlang.words(text)
+    if not w:
+        return 0.0, "boş"
+    low = [trlang.base(x) for x in w]
+    opener = " ".join(low[:2])
+    penalty, hit_opener = 0, None
+    for weak in trlang.WEAK_OPENERS:
+        if opener == weak or opener.startswith(weak + " ") or low[0] == weak:
+            penalty, hit_opener = 30, weak
+            break
+    payload = next((i for i, tok in enumerate(w) if tr_is_payload(tok, i)), None)
+    if payload is None:
+        base, where = 30.0, "cümlenin hiçbir yerinde yük kelimesi yok"
+    elif payload <= 3:
+        base, where = 100.0, f"yük {payload + 1}. kelimede"
+    elif payload <= 6:
+        base, where = 70.0, f"yük {payload + 1}. kelimede, öne alınabilir"
+    else:
+        base, where = 40.0, f"yük {payload + 1}. kelimede, çok geç"
+    detail = where + (f"; zayıf açılış \"{hit_opener}\"" if hit_opener else "")
+    return clamp(base - penalty), detail
+
+
+def tr_imperative(token):
+    t = trlang.base(token)
+    if t in trlang.IMPERATIVES:
+        return True
+    # Kibar çoğul: deneyin, kaydedin, silin
+    m = re.match(r"^(.+?)(?:y?[ıiuü]n)$", t)
+    return bool(m and (m.group(1) in trlang.IMPERATIVES
+                       or m.group(1).replace("d", "t") in trlang.IMPERATIVES))
+
+
+def tr_address(text):
+    """Tek bir izleyiciye mi söyleniyor, yoksa havada mı asılı."""
+    w = trlang.words(text)
+    low = [trlang.base(x) for x in w]
+    if any(t in trlang.SECOND_PERSON or (len(t) > 4 and trlang.SECOND_PERSON_RE.search(t))
+           for t in low):
+        return 100.0, "izleyiciyle konuşuyor"
+    # Türkçede fiil sondadır: her yan cümlenin ilk ve son kelimesine bak.
+    edges = []
+    for clause in re.split(r"[,.;:!?]+", text):
+        cw = trlang.words(clause)
+        edges += cw[:1] + cw[-1:]
+    for tok in edges:
+        if tr_imperative(tok):
+            return 90.0, f"emir kipi (\"{trlang.base(tok)}\")"
+    if any(t in trlang.FIRST_PERSON or (len(t) > 3 and trlang.FIRST_PERSON_RE.search(t))
+           for t in low):
+        return 70.0, "birinci tekil/çoğul şahıs, izleyiciye hitap yok"
+    return 35.0, "üçüncü şahıs, odada kimse yok"
+
+
+TR_NAMES = {"LENGTH": "UZUNLUK", "SPECIFICITY": "SOMUTLUK", "STAKES": "GERİLİM",
+            "FRONTLOAD": "ÖNE ALMA", "ADDRESS": "HİTAP"}
+TR_VERDICT = {"STRONG": "GÜÇLÜ", "OK": "ORTA", "WEAK": "ZAYIF"}
+
+
+def name_of(check, lang):
+    return TR_NAMES[check] if lang == "tr" else check
+
+
+def verdict_of(verdict, lang):
+    return TR_VERDICT[verdict] if lang == "tr" else verdict
+
+
+# ---------------------------------------------------------------------------
+
+def run(text, lang="en"):
+    if lang == "tr":
+        results = {
+            "LENGTH": tr_length(text),
+            "SPECIFICITY": tr_specificity(text),
+            "STAKES": tr_stakes(text),
+            "FRONTLOAD": tr_frontload(text),
+            "ADDRESS": tr_address(text),
+        }
+        breakers = trlang.DEALBREAKERS
+    else:
+        results = {
+            "LENGTH": check_length(text),
+            "SPECIFICITY": check_specificity(text),
+            "STAKES": check_stakes(text),
+            "FRONTLOAD": check_frontload(text),
+            "ADDRESS": check_address(text),
+        }
+        breakers = DEALBREAKERS
+    flags = [msg for pattern, msg in breakers if pattern.search(text)]
     scores = [results[c][0] for c in CHECKS]
     # The weakest property caps the hook, same logic as detect.py: one bad
     # property is enough for the thumb to keep moving.
@@ -237,34 +387,40 @@ def bar(score, width=24):
     return "#" * filled + "." * (width - filled)
 
 
-def render_one(text, results, overall, verdict, flags, out=sys.stdout):
-    print("\nHOOK SCORE", file=out)
+def render_one(text, results, overall, verdict, flags, lang="en", out=sys.stdout):
+    tr = lang == "tr"
+    print("\nHOOK PUANI" if tr else "\nHOOK SCORE", file=out)
     print("=" * 62, file=out)
     print(f"  \"{text.strip()}\"\n", file=out)
     for name in CHECKS:
         score, detail = results[name]
-        print(f"  {name:<13} {bar(score)} {score:5.1f}", file=out)
+        print(f"  {name_of(name, lang):<13} {bar(score)} {score:5.1f}", file=out)
         print(f"  {'':<13} {detail}", file=out)
     print("-" * 62, file=out)
-    print(f"  {'HOOK SCORE':<13} {bar(overall)} {overall:5.1f}   {verdict}", file=out)
+    label = "HOOK PUANI" if tr else "HOOK SCORE"
+    print(f"  {label:<13} {bar(overall)} {overall:5.1f}   {verdict_of(verdict, lang)}", file=out)
     for f in flags:
-        print(f"\n  DEALBREAKER  {f}", file=out)
+        print(f"\n  {'ELEYİCİ' if tr else 'DEALBREAKER'}  {f}", file=out)
     if verdict != "STRONG":
-        weakest = min(CHECKS, key=lambda c: results[c][0])
-        print(f"\n  Weakest property: {weakest}. Fix that one and re-run.", file=out)
+        weakest = name_of(min(CHECKS, key=lambda c: results[c][0]), lang)
+        print(f"\n  En zayıf özellik: {weakest}. Onu düzelt ve tekrar çalıştır." if tr else
+              f"\n  Weakest property: {weakest}. Fix that one and re-run.", file=out)
     print("", file=out)
 
 
-def render_table(rows, out=sys.stdout):
-    print("\nHOOK RANKING\n" + "=" * 78, file=out)
+def render_table(rows, lang="en", out=sys.stdout):
+    tr = lang == "tr"
+    print(("\nHOOK SIRALAMASI\n" if tr else "\nHOOK RANKING\n") + "=" * 78, file=out)
     for i, r in enumerate(rows, 1):
         mark = "->" if i == 1 else "  "
         hook = r["hook"] if len(r["hook"]) <= 62 else r["hook"][:59] + "..."
-        print(f"{mark} {r['score']:5.1f} {r['verdict']:<7} {hook}", file=out)
-        print(f"        weakest: {r['weakest']} ({r['checks'][r['weakest']]['score']:.0f})", file=out)
+        print(f"{mark} {r['score']:5.1f} {verdict_of(r['verdict'], lang):<7} {hook}", file=out)
+        print(f"        {'en zayıf' if tr else 'weakest'}: {name_of(r['weakest'], lang)} "
+              f"({r['checks'][r['weakest']]['score']:.0f})", file=out)
         for f in r["flags"]:
-            print(f"        dealbreaker: {f}", file=out)
-    print("\nShoot the top one. If the top one is under 50, none of these are the hook.\n",
+            print(f"        {'eleyici' if tr else 'dealbreaker'}: {f}", file=out)
+    print("\nEn üsttekini çek. En üstteki 50'nin altındaysa hiçbiri hook değil.\n" if tr else
+          "\nShoot the top one. If the top one is under 50, none of these are the hook.\n",
           file=out)
 
 
@@ -272,6 +428,8 @@ def main():
     ap = argparse.ArgumentParser(description="Score a Reel hook on five properties.")
     ap.add_argument("input", nargs="?", default="-", help="file with one hook per line, or -")
     ap.add_argument("--hook", help="score a single hook given on the command line")
+    ap.add_argument("--lang", choices=["auto", "en", "tr"], default="auto",
+                    help="language of the hooks (default: auto-detect)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
@@ -283,12 +441,14 @@ def main():
     if not lines:
         print("nothing to score", file=sys.stderr)
         sys.exit(2)
+    lang = trlang.detect("\n".join(lines), args.lang)
 
     payload = []
     for line in lines:
-        results, overall, verdict, flags = run(line)
+        results, overall, verdict, flags = run(line, lang)
         payload.append({
             "hook": line,
+            "lang": lang,
             "checks": {k: {"score": round(v[0], 1), "detail": v[1]} for k, v in results.items()},
             "weakest": min(CHECKS, key=lambda c: results[c][0]),
             "flags": flags,
@@ -301,10 +461,10 @@ def main():
         return
 
     if len(payload) == 1:
-        results, overall, verdict, flags = run(lines[0])
-        render_one(lines[0], results, overall, verdict, flags)
+        results, overall, verdict, flags = run(lines[0], lang)
+        render_one(lines[0], results, overall, verdict, flags, lang)
     else:
-        render_table(sorted(payload, key=lambda r: -r["score"]))
+        render_table(sorted(payload, key=lambda r: -r["score"]), lang)
 
     sys.exit(0 if max(p["score"] for p in payload) >= 70 else 1)
 

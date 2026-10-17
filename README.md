@@ -1,5 +1,17 @@
 # The Instagram agent skill
 
+> **🇹🇷 Türkçe destekli fork.** Bu sürüm, [Jake Schincariol'un orijinal
+> deposunun](https://github.com/Jakeschincariol/instagram-agent-skill) Türkçeye
+> uyarlanmış hâlidir. `/ig-reel`, `/ig-human` ve `/ig-viral` Türkçe metni
+> algılar ve doğru ölçer: süre heceden hesaplanır, kelimeler eklere duyarlı
+> eşlenir, 26 hook formülünün Türkçe örnekleri ve Türkçe bir "yapay zeka
+> kokan kelime" sözlüğü vardır. İngilizce davranış birebir aynı kalır.
+> Türkçe kılavuz: **[README.tr.md](README.tr.md)**
+>
+> *Turkish-language fork. The tools above auto-detect Turkish; English output
+> is unchanged. See [README.tr.md](README.tr.md#for-english-readers) for a
+> summary of the changes in English.*
+
 Thirteen Claude skills that run an Instagram account. Free, MIT, no signup, no
 API key, nothing to connect.
 
@@ -324,11 +336,18 @@ skills/ig-human/detect.py          the five-check panel
 skills/ig-viral/swipe.py           outlier ranking and formula classification
 skills/ig-profile/rubric.json      the 100-point profile score
 templates/voice.md                 your voice profile. Fill this in first.
+
+Turkish fork additions:
+skills/ig-reel/trlang.py           Turkish syllables, spoken numbers, suffix-aware matching
+skills/ig-human/trhuman.py         Turkish mode for humanize.py and detect.py
+skills/ig-human/slop_tr.json       Turkish lexicon: 99 phrases, 46 stems, 19 tells
 ```
 
 ## Credit
 
 Made by Jake Schincariol, [opusjake.ai](https://opusjake.ai).
+
+Turkish adaptation by [halilmeric](https://github.com/halilmeric).
 
 Sibling repo, same idea for a different platform:
 [linkedin-agent-skill](https://github.com/Jakeschincariol/linkedin-agent-skill).

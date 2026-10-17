@@ -1,0 +1,1002 @@
+{
+  "version": "1.0",
+  "lang": "tr",
+  "note": "Türkçe sözlük: humanize.py ve detect.py Türkçe metinde bunu kullanır; görünmez karakterler ve tipografi listesi İngilizce slop.json'dan gelir. Türkçe sondan eklemeli olduğu için iki katman var: 'words' ve 'phrases' ek almayan kalıplardır, otomatik değiştirilir. 'stems' ek alabilen köklerdir ('gerçekleştirdim', 'gerçekleştirmek'): kelime kelime değiştirmek dilbilgisini bozar ('yapdım'), bu yüzden önerisiyle işaretlenir ve cümleyi sen yeniden yazarsın. Yapılar Türkçe küçük harfe çevrilmiş metinde aranır (I -> ı, İ -> i). Dosya senin: kendi kullandığın bir kelimeyi siliyorsa listeden çıkar.",
+  "invisible": [
+    {
+      "cp": "U+200B",
+      "name": "ZERO WIDTH SPACE",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200C",
+      "name": "ZERO WIDTH NON-JOINER",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200D",
+      "name": "ZERO WIDTH JOINER",
+      "action": "delete"
+    },
+    {
+      "cp": "U+2060",
+      "name": "WORD JOINER",
+      "action": "delete"
+    },
+    {
+      "cp": "U+FEFF",
+      "name": "ZERO WIDTH NO-BREAK SPACE / BOM",
+      "action": "delete"
+    },
+    {
+      "cp": "U+00AD",
+      "name": "SOFT HYPHEN",
+      "action": "delete"
+    },
+    {
+      "cp": "U+180E",
+      "name": "MONGOLIAN VOWEL SEPARATOR",
+      "action": "delete"
+    },
+    {
+      "cp": "U+061C",
+      "name": "ARABIC LETTER MARK",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200E",
+      "name": "LEFT-TO-RIGHT MARK",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200F",
+      "name": "RIGHT-TO-LEFT MARK",
+      "action": "delete"
+    },
+    {
+      "cp": "U+E0000-U+E007F",
+      "name": "TAG CHARACTERS (invisible ASCII smuggling)",
+      "action": "delete"
+    },
+    {
+      "cp": "U+00A0",
+      "name": "NO-BREAK SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+202F",
+      "name": "NARROW NO-BREAK SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2009",
+      "name": "THIN SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2007",
+      "name": "FIGURE SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2003",
+      "name": "EM SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2002",
+      "name": "EN SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2063",
+      "name": "INVISIBLE SEPARATOR",
+      "action": "delete"
+    }
+  ],
+  "typographic": [
+    {
+      "from": "—",
+      "name": "EM DASH",
+      "to": ", "
+    },
+    {
+      "from": "–",
+      "name": "EN DASH",
+      "to": "-"
+    },
+    {
+      "from": "‘",
+      "name": "LEFT SINGLE QUOTE",
+      "to": "'"
+    },
+    {
+      "from": "’",
+      "name": "RIGHT SINGLE QUOTE",
+      "to": "'"
+    },
+    {
+      "from": "“",
+      "name": "LEFT DOUBLE QUOTE",
+      "to": "\""
+    },
+    {
+      "from": "”",
+      "name": "RIGHT DOUBLE QUOTE",
+      "to": "\""
+    },
+    {
+      "from": "…",
+      "name": "HORIZONTAL ELLIPSIS",
+      "to": "..."
+    },
+    {
+      "from": "′",
+      "name": "PRIME",
+      "to": "'"
+    },
+    {
+      "from": "·",
+      "name": "MIDDLE DOT",
+      "to": "-"
+    },
+    {
+      "from": "•",
+      "name": "BULLET",
+      "to": "-"
+    },
+    {
+      "from": "→",
+      "name": "RIGHTWARDS ARROW",
+      "to": "->"
+    }
+  ],
+  "words": [
+    {
+      "find": "bu bağlamda",
+      "replace": "bu yüzden",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "bu doğrultuda",
+      "replace": "bu yüzden",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "bu çerçevede",
+      "replace": "burada",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "bu noktada",
+      "replace": "burada",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "bununla birlikte",
+      "replace": "ama",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "bununla beraber",
+      "replace": "ama",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "buna ek olarak",
+      "replace": "bir de",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "bunun yanı sıra",
+      "replace": "bir de",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "ek olarak",
+      "replace": "bir de",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "öte yandan",
+      "replace": "ama",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "diğer bir deyişle",
+      "replace": "yani",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "başka bir deyişle",
+      "replace": "yani",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "nihayetinde",
+      "replace": "sonunda",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "neticede",
+      "replace": "sonunda",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "dolayısıyla",
+      "replace": "bu yüzden",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "sonuç olarak",
+      "replace": "kısacası",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "özetlemek gerekirse",
+      "replace": "kısacası",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "son tahlilde",
+      "replace": "sonunda",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "her şeyden önce",
+      "replace": "önce",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "ilk olarak",
+      "replace": "önce",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "son olarak",
+      "replace": "en son",
+      "family": "bağlaçlar"
+    },
+    {
+      "find": "son derece",
+      "replace": "çok",
+      "family": "zarflar"
+    },
+    {
+      "find": "oldukça",
+      "replace": "epey",
+      "family": "zarflar"
+    },
+    {
+      "find": "derinlemesine",
+      "replace": "detaylı",
+      "family": "zarflar"
+    },
+    {
+      "find": "titizlikle",
+      "replace": "dikkatle",
+      "family": "zarflar"
+    },
+    {
+      "find": "özenle",
+      "replace": "dikkatle",
+      "family": "zarflar"
+    },
+    {
+      "find": "etkili bir şekilde",
+      "replace": "iyi",
+      "family": "zarflar"
+    },
+    {
+      "find": "etkin bir şekilde",
+      "replace": "iyi",
+      "family": "zarflar"
+    },
+    {
+      "find": "verimli bir şekilde",
+      "replace": "hızlı",
+      "family": "zarflar"
+    },
+    {
+      "find": "sorunsuz bir şekilde",
+      "replace": "kolayca",
+      "family": "zarflar"
+    },
+    {
+      "find": "kusursuz bir şekilde",
+      "replace": "düzgün",
+      "family": "zarflar"
+    },
+    {
+      "find": "hızlı bir şekilde",
+      "replace": "hızlıca",
+      "family": "zarflar"
+    },
+    {
+      "find": "kolay bir şekilde",
+      "replace": "kolayca",
+      "family": "zarflar"
+    },
+    {
+      "find": "büyük ölçüde",
+      "replace": "çoğunlukla",
+      "family": "zarflar"
+    },
+    {
+      "find": "kayda değer",
+      "replace": "ciddi",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "çığır açan",
+      "replace": "yeni",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "devrim niteliğinde",
+      "replace": "büyük",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "oyunun kurallarını değiştiren",
+      "replace": "büyük farkı yapan",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "kapsamlı",
+      "replace": "detaylı",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "eşsiz",
+      "replace": "farklı",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "muazzam",
+      "replace": "büyük",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "benzersiz",
+      "replace": "farklı",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "ilham verici",
+      "replace": "iyi",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "vazgeçilmez",
+      "replace": "şart",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "kritik öneme sahip",
+      "replace": "çok önemli",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "hayati önem taşıyan",
+      "replace": "çok önemli",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "büyük önem taşıyan",
+      "replace": "çok önemli",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "özenle seçilmiş",
+      "replace": "seçtiğim",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "holistik",
+      "replace": "bütün",
+      "family": "isimler"
+    },
+    {
+      "find": "bütünsel",
+      "replace": "bütün",
+      "family": "isimler"
+    },
+    {
+      "find": "sinerji",
+      "replace": "ortak iş",
+      "family": "isimler"
+    },
+    {
+      "find": "paradigma",
+      "replace": "bakış",
+      "family": "isimler"
+    }
+  ],
+  "phrases": [
+    {
+      "find": "günümüzün hızla değişen dünyasında",
+      "replace": "şu an",
+      "family": "açılışlar"
+    },
+    {
+      "find": "hızla değişen dünyamızda",
+      "replace": "şu an",
+      "family": "açılışlar"
+    },
+    {
+      "find": "hızla değişen dünyada",
+      "replace": "şu an",
+      "family": "açılışlar"
+    },
+    {
+      "find": "günümüz dünyasında",
+      "replace": "bugün",
+      "family": "açılışlar"
+    },
+    {
+      "find": "dijital çağda",
+      "replace": "bugün",
+      "family": "açılışlar"
+    },
+    {
+      "find": "dijital çağın",
+      "replace": "bugünün",
+      "family": "açılışlar"
+    },
+    {
+      "find": "teknolojinin hızla geliştiği",
+      "replace": "bugünkü",
+      "family": "açılışlar"
+    },
+    {
+      "find": "şunu belirtmek gerekir ki",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "belirtmek gerekir ki",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "belirtmek gerekirse",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "önemle belirtmek isterim ki",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "unutulmamalıdır ki",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "şunu unutmamak gerekir ki",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "şunu unutmamalıyız ki",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "altını çizmek gerekir ki",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "göz önünde bulundurulduğunda",
+      "replace": "düşününce",
+      "family": "dolgu"
+    },
+    {
+      "find": "lafı uzatmadan",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "sözü daha fazla uzatmadan",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "hadi başlayalım",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "o zaman başlayalım",
+      "replace": "",
+      "family": "dolgu"
+    },
+    {
+      "find": "merhaba arkadaşlar",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "herkese merhaba",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "selam arkadaşlar",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "sevgili takipçilerim",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "kaydırmayı bırak",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "hemen geçme",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "takip etmeyi unutma",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "takip etmeyi unutmayın",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "beğenmeyi unutma",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "beğenmeyi unutmayın",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "kaydetmeyi unutma",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "kaydetmeyi unutmayın",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "daha fazlası için takip et",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "daha fazlası için takipte kal",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "takipte kalın",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "ihtiyacı olan birini etiketle",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "ihtiyacı olan arkadaşını etiketle",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "bunu görmesi gereken birini etiketle",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "yorumlarda buluşalım",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "düşüncelerinizi yorumlarda paylaşın",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "yorumlarda belirtin",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "sizce de öyle değil mi",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "algoritma bayılıyor",
+      "replace": "Instagram öne çıkarıyor",
+      "family": "instagram"
+    },
+    {
+      "find": "algoritmayı yenmek",
+      "replace": "erişim almak",
+      "family": "instagram"
+    },
+    {
+      "find": "bir gecede viral olmak",
+      "replace": "erişim almak",
+      "family": "instagram"
+    },
+    {
+      "find": "bana güvenin",
+      "replace": "",
+      "family": "instagram"
+    },
+    {
+      "find": "bana güven",
+      "replace": "",
+      "family": "instagram"
+    }
+  ],
+  "stems": [
+    {
+      "find": "gerçekleştir",
+      "suggest": "yap",
+      "family": "fiiller"
+    },
+    {
+      "find": "sağlamaktadır",
+      "suggest": "sağlıyor",
+      "family": "fiiller"
+    },
+    {
+      "find": "göz ardı et",
+      "suggest": "atla, görmezden gel",
+      "family": "fiiller"
+    },
+    {
+      "find": "göz ardı edil",
+      "suggest": "atlan",
+      "family": "fiiller"
+    },
+    {
+      "find": "hayati önem taşı",
+      "suggest": "çok önemli",
+      "family": "fiiller"
+    },
+    {
+      "find": "büyük önem taşı",
+      "suggest": "çok önemli",
+      "family": "fiiller"
+    },
+    {
+      "find": "kritik rol oyna",
+      "suggest": "çok önemli",
+      "family": "fiiller"
+    },
+    {
+      "find": "önemli bir rol oyna",
+      "suggest": "önemli",
+      "family": "fiiller"
+    },
+    {
+      "find": "kilit rol oyna",
+      "suggest": "asıl işi yapıyor",
+      "family": "fiiller"
+    },
+    {
+      "find": "katkı sağla",
+      "suggest": "katkı ver, yardım et",
+      "family": "fiiller"
+    },
+    {
+      "find": "fayda sağla",
+      "suggest": "işe yara",
+      "family": "fiiller"
+    },
+    {
+      "find": "imkan sağla",
+      "suggest": "izin ver",
+      "family": "fiiller"
+    },
+    {
+      "find": "imkân sağla",
+      "suggest": "izin ver",
+      "family": "fiiller"
+    },
+    {
+      "find": "olanak sağla",
+      "suggest": "izin ver",
+      "family": "fiiller"
+    },
+    {
+      "find": "olanak tanı",
+      "suggest": "izin ver",
+      "family": "fiiller"
+    },
+    {
+      "find": "optimize et",
+      "suggest": "iyileştir",
+      "family": "fiiller"
+    },
+    {
+      "find": "maksimize et",
+      "suggest": "artır",
+      "family": "fiiller"
+    },
+    {
+      "find": "değer kat",
+      "suggest": "işe yara",
+      "family": "fiiller"
+    },
+    {
+      "find": "fark yarat",
+      "suggest": "işe yara",
+      "family": "fiiller"
+    },
+    {
+      "find": "bir sonraki seviyeye taşı",
+      "suggest": "ilerlet",
+      "family": "fiiller"
+    },
+    {
+      "find": "üst seviyeye taşı",
+      "suggest": "ilerlet",
+      "family": "fiiller"
+    },
+    {
+      "find": "potansiyelini ortaya çıkar",
+      "suggest": "ne yapabildiğini göster",
+      "family": "fiiller"
+    },
+    {
+      "find": "tam potansiyel",
+      "suggest": "(sil, somut bir şey yaz)",
+      "family": "isimler"
+    },
+    {
+      "find": "kilidini aç",
+      "suggest": "aç",
+      "family": "fiiller"
+    },
+    {
+      "find": "derinlere dal",
+      "suggest": "bak",
+      "family": "fiiller"
+    },
+    {
+      "find": "dünyasına adım at",
+      "suggest": "başla",
+      "family": "fiiller"
+    },
+    {
+      "find": "yolculuğa çık",
+      "suggest": "başla",
+      "family": "fiiller"
+    },
+    {
+      "find": "hayatını değiştirecek",
+      "suggest": "(ne değiştirdiğini rakamla söyle)",
+      "family": "fiiller"
+    },
+    {
+      "find": "hayatınızı değiştirecek",
+      "suggest": "(ne değiştirdiğini rakamla söyle)",
+      "family": "fiiller"
+    },
+    {
+      "find": "oyunun kurallarını değiştir",
+      "suggest": "(neyi değiştirdiğini söyle)",
+      "family": "fiiller"
+    },
+    {
+      "find": "bilinçli kararlar al",
+      "suggest": "doğru karar ver",
+      "family": "fiiller"
+    },
+    {
+      "find": "keşfetmeye hazır",
+      "suggest": "(sil)",
+      "family": "fiiller"
+    },
+    {
+      "find": "yolculuğ",
+      "suggest": "süreç",
+      "family": "isimler"
+    },
+    {
+      "find": "yolculuk",
+      "suggest": "süreç",
+      "family": "isimler"
+    },
+    {
+      "find": "serüven",
+      "suggest": "süreç",
+      "family": "isimler"
+    },
+    {
+      "find": "ekosistem",
+      "suggest": "ortam",
+      "family": "isimler"
+    },
+    {
+      "find": "vizyoner",
+      "suggest": "(sil ya da ne yaptığını söyle)",
+      "family": "isimler"
+    },
+    {
+      "find": "nüans",
+      "suggest": "ince fark",
+      "family": "isimler"
+    },
+    {
+      "find": "tutkulu",
+      "suggest": "(sil, ne yaptığını söyle)",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "kusursuz",
+      "suggest": "düzgün",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "sorunsuz",
+      "suggest": "kolay",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "inanılmaz",
+      "suggest": "(rakamla söyle)",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "harika bir",
+      "suggest": "iyi bir",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "muhteşem",
+      "suggest": "(rakamla söyle)",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "dinamik",
+      "suggest": "(sil)",
+      "family": "sıfatlar"
+    },
+    {
+      "find": "yenilikçi",
+      "suggest": "yeni",
+      "family": "sıfatlar"
+    }
+  ],
+  "structures": [
+    {
+      "id": "sadece-degil",
+      "regex": "\\bsadece [^.!?\\n]{2,60} değil,? (?:aynı zamanda|ayrıca|bir de)\\b",
+      "name": "\"Sadece X değil, aynı zamanda Y\"",
+      "fix": "Asıl kastettiğin tek şeyi söyle. Hazırlık yarısını sil."
+    },
+    {
+      "id": "hem-hem-de",
+      "regex": "\\bhem [^.!?\\n]{2,60} hem de\\b",
+      "name": "\"Hem X hem de Y\"",
+      "fix": "İki cümleye böl ya da zayıf yarısını at."
+    },
+    {
+      "id": "mesele-degil",
+      "regex": "\\b(?:mesele|konu|olay|bu)\\b[^.!?\\n]{2,60}\\b(?:değil)[.!,]\\s*(?:mesele|asıl mesele|olay|asıl olay)\\b",
+      "name": "\"Mesele X değil. Mesele Y.\"",
+      "fix": "Y ile başla. Ters çevirme kalıbın kendisi ele veriyor."
+    },
+    {
+      "id": "soru-satiri",
+      "regex": "(?m)^\\s*(?:sonuç|peki sonuç|işin güzel yanı|en güzel yanı|püf noktası|sır|cevap)\\s?(?:mu|mı|ne)?\\?\\s*$",
+      "name": "Tek kelimelik retorik soru satırı (\"Sonuç mu?\")",
+      "fix": "Soruyu sil, cevabı doğrudan söyle."
+    },
+    {
+      "id": "nasil-mi",
+      "regex": "\\b(?:nasıl|neden|niye|ne) m[ıi]\\?",
+      "name": "\"Nasıl mı?\" / \"Neden mi?\"",
+      "fix": "Kendi sorduğun soruya geçiş yapma. Cevabı cümleye koy."
+    },
+    {
+      "id": "iste-ogrendiklerim",
+      "regex": "\\bişte (?:öğrendiklerim|öğrendiğim\\w*|bildiklerim)\\b",
+      "name": "\"İşte öğrendiklerim\"",
+      "fix": "Öğrendiğin ilk şeyle başla."
+    },
+    {
+      "id": "yazi-dili-kipi",
+      "regex": "\\b\\w+(?:mekte|makta)(?:dır|dir)\\b",
+      "name": "Yazı dili kipi (-mektedir / -maktadır)",
+      "fix": "Konuşur gibi yaz: 'sağlamaktadır' değil 'sağlıyor', 'kullanılmaktadır' değil 'kullanılıyor'."
+    },
+    {
+      "id": "vaaz-tonu",
+      "regex": "\\b\\w+m[ae]l[ıi](?:d[ıi]r|yız|yiz|sınız|siniz)\\b",
+      "name": "Vaaz tonu (-malıdır / -malıyız / -melisiniz)",
+      "fix": "Öğüt verme, ne yaptığını anlat: 'yapmalısınız' değil 'ben şunu yapıyorum'."
+    },
+    {
+      "id": "uclu",
+      "regex": "\\b\\w+, \\w+ ve \\w+\\.",
+      "name": "Üçlü sıralama (\"X, Y ve Z.\")",
+      "fix": "Üçten birini sil. İkisi daha inandırıcı, üçü kalıp gibi."
+    },
+    {
+      "id": "roket",
+      "regex": "[🚀🔥💡✨🎯]",
+      "name": "Roket / ateş / ampul / pırıltı / hedef emojisi",
+      "fix": "Sil. Bu beşi yapay zeka metninin imzası."
+    },
+    {
+      "id": "hashtag-duvari",
+      "regex": "(?:#\\w+[ \\t]*){5,}",
+      "name": "Hashtag duvarı (5+)",
+      "fix": "En fazla üç, açıklamanın en altında."
+    },
+    {
+      "id": "yapay-zeka-olarak",
+      "regex": "\\bbir yapay zeka (?:olarak|modeli olarak)\\b|\\bbir dil modeli olarak\\b",
+      "name": "Modelin kendinden bahsetmesi",
+      "fix": "Sil."
+    },
+    {
+      "id": "ozetle-acilis",
+      "regex": "(?m)^\\s*(?:özetle|özetlemek gerekirse|sonuç olarak|toparlamak gerekirse)\\b",
+      "name": "Kompozisyon kapanışı",
+      "fix": "Özet yapma. Son cümle zaten özet olmalı."
+    },
+    {
+      "id": "etkilesim-yemi",
+      "regex": "\\b(?:katılıyor musun(?:uz)?\\?|ne düşünüyorsun(?:uz)?\\?|sizce\\?|yanılıyor muyum\\?|bir tek ben mi\\b)\\s*$",
+      "name": "Refleks etkileşim yemi",
+      "fix": "Gerçek, cevaplanabilir bir soru sor ya da hiç sorma."
+    },
+    {
+      "id": "kaydirma",
+      "regex": "(?m)^\\s*(?:kaydırmayı bırak|kaydırma|geçme|dur[,.!]? geçme)\\b",
+      "name": "\"Kaydırma\" açılışı",
+      "fix": "Sil ve vaatle aç."
+    },
+    {
+      "id": "bu-videoda",
+      "regex": "\\b(?:bu videoda|bugünkü videoda|bugünkü videomuzda|bu reels'?te|bu içerikte)\\b|\\bsize [^.!?\\n]{0,30}(?:göstereceğim|anlatacağım)\\b",
+      "name": "Video girizgâhı (\"bu videoda size ... göstereceğim\")",
+      "fix": "Sil. Video, girizgâhtan sonraki cümleyle başlar."
+    },
+    {
+      "id": "emoji-madde",
+      "regex": "(?m)^\\s*[\\U0001F300-\\U0001FAFF✅➡⬅✔✨]\\s*\\S",
+      "name": "Emoji madde işaretli liste",
+      "fix": "Tire kullan ya da düz cümle yaz."
+    },
+    {
+      "id": "bagiran",
+      "regex": "\\b[A-ZÇĞİÖŞÜ]{3,}\\b(?:\\s+\\b[A-ZÇĞİÖŞÜ]{3,}\\b){2,}",
+      "name": "Art arda üç ve daha fazla büyük harfli kelime",
+      "fix": "Tek kelimeyi vurgula, gerisini normal yaz.",
+      "raw": true
+    },
+    {
+      "id": "takip-yemi",
+      "regex": "\\b(?:takip et(?:meyi unutma)?|etiketle|beğen(?:meyi unutma)?|kaydet(?:meyi unutma)?|paylaş(?:mayı unutma)?)\\b[^.!?\\n]{0,30}(?:unutma|ihtiyacı olan|arkadaşını)",
+      "name": "Refleks takip / etiket yemi",
+      "fix": "Tek bir çağrı bırak ve sebebini söyle: 'kaydet, cuma lazım olacak'."
+    }
+  ]
+}

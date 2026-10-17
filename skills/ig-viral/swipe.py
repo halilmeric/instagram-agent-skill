@@ -39,8 +39,10 @@ WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
 try:                                              # optional: score the hooks too
     sys.path.insert(0, os.path.join(HERE, "..", "ig-reel"))
     from hookscore import run as score_hook       # noqa: E402
+    import trlang                                 # noqa: E402  Türkçe desteği
 except Exception:                                 # ig-viral copied on its own
     score_hook = None
+    trlang = None
 
 
 def load_formulas(path):
@@ -50,16 +52,32 @@ def load_formulas(path):
         return None
     by_id = {h["id"]: h for h in d["hooks"]}
     order = d.get("classify_order") or sorted(by_id)
-    return [(by_id[i]["id"], by_id[i]["name"],
-             re.compile(by_id[i]["match"], re.IGNORECASE)) for i in order if i in by_id]
+    out = []
+    for i in order:
+        if i not in by_id:
+            continue
+        h = by_id[i]
+        tr = re.compile(h["match_tr"]) if h.get("match_tr") else None
+        out.append((h["id"], h["name"], re.compile(h["match"], re.IGNORECASE),
+                    h.get("name_tr"), tr))
+    return out
+
+
+def tr_lower(text):
+    """Türkçe küçük harf: I -> ı, İ -> i."""
+    return text.replace("I", "ı").replace("İ", "i").lower()
 
 
 def classify(hook, formulas):
     if not formulas:
         return None, "unclassified"
-    for fid, name, pattern in formulas:
+    low = tr_lower(hook)
+    for fid, name, pattern, name_tr, pattern_tr in formulas:
         if pattern.search(hook):
             return fid, name
+        # Türkçe hook: Türkçe kuralla eşleşirse adı iki dilde ver.
+        if pattern_tr and pattern_tr.search(low):
+            return fid, f"{name} / {name_tr}"
     return None, "unclassified"
 
 
@@ -98,9 +116,12 @@ def analyse(rows, formulas):
         r["baseline"] = base
         r["outlier"] = round(r["views"] / base, 2) if base else None
         r["formula_id"], r["formula"] = classify(r["hook"], formulas)
-        r["words"] = len(WORD_RE.findall(r["hook"]))
+        lang = trlang.detect(r["hook"]) if trlang else "en"
+        r["lang"] = lang
+        r["words"] = (len(trlang.words(r["hook"])) if lang == "tr"
+                      else len(WORD_RE.findall(r["hook"])))
         if score_hook:
-            _, overall, verdict, _ = score_hook(r["hook"])
+            _, overall, verdict, _ = score_hook(r["hook"], lang)
             r["hook_score"], r["hook_verdict"] = round(overall, 1), verdict
         else:
             r["hook_score"], r["hook_verdict"] = None, None

@@ -22,6 +22,37 @@ python3 hookscore.py --hook "one line"      # score a single one
 python3 beats.py script.txt --target 30     # timed beat sheet before you shoot
 ```
 
+## Turkish (Türkçe)
+
+Both tools detect Turkish automatically (force it with `--lang tr`) and then
+measure Turkish properly: length in syllables, not words, numbers counted as
+spoken ("18.000" = "on sekiz bin"), suffix-aware matching ("kaybet" catches
+"kaybettiğim"), negation read from inside the verb ("yapmadım"), imperatives
+found at the end of the clause, and every note printed in Turkish.
+
+- If the user writes in Turkish, or their reels are in Turkish, write the
+  hooks, the script and the on-screen text in Turkish, and answer in Turkish.
+- Every formula in `hooks.json` carries Turkish fields: `name_tr`,
+  `template_tr`, `example_tr`, `on_screen_tr`, `best_for_tr`, `trap_tr`, and
+  `rules_tr` at the top. Read those for a Turkish Reel. They are rewritten the
+  way a Turkish creator would say them, not translated. Use them for the shape,
+  and still write the user's own line: never paste the example.
+- When you show the scored hooks, name the formula in Turkish
+  (`#5 Zaman Çöküşü`).
+- Spoken Turkish, not written Turkish: "yaptım", not "gerçekleştirdim".
+  Short clauses, verb at the end, the payload word up front.
+- Money in TL with Turkish separators: "18.000 TL", "%40", "2,5 saat".
+- Default rate is 5.5 syllables per second. Once the user has timed themselves
+  reading a script aloud, pass `--sps` with their real rate.
+- On-screen cards: six words or fewer still applies, and Turkish words run
+  long, so aim for three or four.
+- `/ig-human` handles Turkish too: it detects the language, uses
+  `slop_tr.json`, and reports in Turkish. Run it the same way. Turkish verbs
+  take suffixes, so it auto-replaces only fixed phrases and flags the rest
+  ("gerçekleştirdim", "önemli bir rol oynuyor") with a suggestion: rewrite
+  those lines yourself before you show the script. Use the Turkish verdict in
+  the REEL READY block (`insan puanı 78 GEÇTİ`).
+
 ## Before you write
 
 1. Read `~/.claude/instagram/voice.md` if it exists. That is the user's voice

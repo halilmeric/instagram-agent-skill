@@ -27,6 +27,38 @@ vocabulary that only shows up in captions and voiceovers. It is meant to be
 edited. If the user has a word they always use that the lexicon strips, take it
 out of the file.
 
+## Turkish (Türkçe)
+
+Both tools detect Turkish on their own (force it with `--lang tr`), switch to
+`slop_tr.json`, and print every report and panel in Turkish. The invisible
+character and typography passes are shared with English.
+
+`slop_tr.json` has two layers, because Turkish is agglutinative and a word swap
+that is safe in English breaks Turkish grammar ("gerçekleştirdim" -> "yapdım"):
+
+- **`words` and `phrases`** (99): fixed forms that take no suffix. Replaced
+  automatically. Translation-ese connectives ("bu bağlamda", "nihayetinde",
+  "dolayısıyla"), inflated adverbs ("son derece", "derinlemesine"), hype
+  adjectives ("çığır açan", "eşsiz"), essay openers ("günümüzün hızla değişen
+  dünyasında") and the Instagram block ("takip etmeyi unutmayın", "ihtiyacı
+  olan birini etiketle", "merhaba arkadaşlar").
+- **`stems`** (46): roots that take suffixes ("gerçekleştir", "önemli bir rol
+  oyna", "potansiyelini ortaya çıkar", "yolculuk"). Never replaced. Reported
+  with the word as written and a suggestion. Rewrite each of those sentences
+  yourself; that is the step that makes Turkish sound spoken.
+
+19 Turkish structural tells are flagged: "sadece X değil, aynı zamanda Y",
+"hem X hem de Y", "Sonuç mu?", "Nasıl mı?", written-register verbs
+(-mektedir/-maktadır), sermon tone (-malıdır/-melisiniz), triads, the video
+preamble, the "kaydırma" opener, reflex follow bait, rocket emoji, hashtag walls.
+
+In `detect.py`, VOICE looks for spoken-Turkish markers ("yani", "bak", "işte",
+"bi") and person read from verb endings ("yaptım", "yapıyorsun"), not English
+contractions. BURSTINESS (sentence-length variation) is unchanged and is the
+weakest signal in Turkish: Turkish sentences carry fewer, longer words, so a
+low BURSTINESS score on a natural Turkish draft is not proof of anything. Fix
+the other four first.
+
 ## Why this matters more on Instagram than it looks
 
 Captions are short and scripts get said out loud. A written-sounding line in a

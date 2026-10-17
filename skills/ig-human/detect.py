@@ -19,6 +19,12 @@ Usage
   pbpaste | python3 detect.py -
   python3 detect.py draft.txt --json
   python3 detect.py before.txt after.txt      # compare two drafts
+  python3 detect.py taslak.txt --lang tr      # Türkçe (varsayılan: otomatik)
+
+Türkçe: dil otomatik algılanır. Sözlük slop_tr.json'dan gelir, VOICE kontrolü
+İngilizce kısaltmalar yerine konuşma dili işaretlerine ("yani", "bak", "işte")
+ve fiil ekinden okunan kişiye ("yaptım", "yapıyorsun") bakar, çıktı Türkçedir.
+Eşikler ve ağırlıklar aynıdır.
 """
 
 import argparse
@@ -31,6 +37,8 @@ import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LEX = os.path.join(HERE, "slop.json")
+sys.path.insert(0, HERE)
+import trhuman  # noqa: E402
 
 SENT_RE = re.compile(r"[^.!?\n]+[.!?]*")
 WORD_RE = re.compile(r"[A-Za-z']+")
@@ -151,16 +159,103 @@ def check_voice(text, lex):
     return clamp(score), detail
 
 
+# ---------------------------------------------------------------- Türkçe ---
+
+def tr_burstiness(text):
+    score, detail = check_burstiness(text)
+    if detail == "too short to judge":
+        return score, "karar vermek için çok kısa"
+    m = re.match(r"variation ([\d.]+) across (\d+) sentences", detail)
+    return score, f"{m.group(2)} cümlede {m.group(1)} değişkenlik (hedef 0.55+)"
+
+
+def tr_specificity(text):
+    w = trhuman.words(text)
+    if len(w) < 25:
+        return 50.0, "karar vermek için çok kısa"
+    per100 = 100 / len(w)
+    hits = len(NUMBERS.findall(text)) + len(set(trhuman.PROPER_RE.findall(text)))
+    density = hits * per100
+    score = scale(density, human=6.0, machine=0.5)
+    return score, f"{hits} somut işaret, 100 kelimede {density:.1f} (hedef 4+)"
+
+
+def tr_slop(text, lex):
+    w = trhuman.words(text)
+    if not w:
+        return 50.0, "boş"
+    found = trhuman.slop_hits(text, lex)
+    hits = sum(n for _, n in found)
+    density = hits * 100 / len(w)
+    score = scale(density, human=0.0, machine=4.0)
+    detail = f"{hits} kalıp ifade, 100 kelimede {density:.1f}"
+    if found:
+        names = sorted(f for f, _ in found)
+        detail += " (" + ", ".join(names[:4]) + (", ..." if len(names) > 4 else "") + ")"
+    return score, detail
+
+
+def tr_fingerprint(text):
+    score, _ = check_fingerprint(text)
+    invisible = sum(1 for c in text if unicodedata.category(c) == "Cf")
+    em = text.count("—")
+    curly = sum(text.count(c) for c in "‘’“”")
+    ellip = text.count("…")
+    nbsp = sum(text.count(c) for c in "   ")
+    return score, (f"{invisible} görünmez, {em} uzun tire, {curly} kıvrık tırnak, "
+                   f"{ellip} üç nokta karakteri, {nbsp} bölünmez boşluk")
+
+
+def tr_voice(text, lex):
+    w = trhuman.words(text)
+    if len(w) < 25:
+        return 50.0, "karar vermek için çok kısa"
+    per100 = 100 / len(w)
+    colloquial, person = trhuman.voice_counts(text)
+    colloquial *= per100
+    person *= per100
+    flags = trhuman.scan_structures(text, lex)
+    tells = sum(f["count"] for f in flags)
+    names = [f["id"] for f in flags]
+    bullets = [len(b.split()) for b in re.findall(r"(?m)^\s*[-*•]\s+(.+)$", text)]
+    uniform = (len(bullets) >= 3 and statistics.pstdev(bullets) < 1.6)
+    score = (scale(colloquial, human=2.0, machine=0.0) * 0.35
+             + scale(person, human=8.0, machine=1.0) * 0.35
+             + clamp(100 - tells * 22) * 0.30)
+    if uniform:
+        score -= 12
+        names.append("tek-tip-maddeler")
+    detail = (f"100 kelimede {colloquial:.1f} konuşma dili işareti, {person:.1f} kişi işareti, "
+              f"{tells} yapı kalıbı")
+    if names:
+        detail += " [" + ", ".join(names[:4]) + "]"
+    return clamp(score), detail
+
+
+TR_NAMES = {"BURSTINESS": "RİTİM", "SPECIFICITY": "SOMUTLUK", "SLOP DENSITY": "KALIP YOĞUNLUĞU",
+            "FINGERPRINT": "PARMAK İZİ", "VOICE": "SES"}
+TR_VERDICT = {"PASS": "GEÇTİ", "REVIEW": "GÖZDEN GEÇİR", "FLAGGED": "İŞARETLENDİ"}
+
+
+# ---------------------------------------------------------------------------
+
 CHECKS = ["BURSTINESS", "SPECIFICITY", "SLOP DENSITY", "FINGERPRINT", "VOICE"]
 
 
-def run(text, lex):
+def run(text, lex, lang="en"):
     results = {}
-    results["BURSTINESS"] = check_burstiness(text)
-    results["SPECIFICITY"] = check_specificity(text)
-    results["SLOP DENSITY"] = check_slop(text, lex)
-    results["FINGERPRINT"] = check_fingerprint(text)
-    results["VOICE"] = check_voice(text, lex)
+    if lang == "tr":
+        results["BURSTINESS"] = tr_burstiness(text)
+        results["SPECIFICITY"] = tr_specificity(text)
+        results["SLOP DENSITY"] = tr_slop(text, lex)
+        results["FINGERPRINT"] = tr_fingerprint(text)
+        results["VOICE"] = tr_voice(text, lex)
+    else:
+        results["BURSTINESS"] = check_burstiness(text)
+        results["SPECIFICITY"] = check_specificity(text)
+        results["SLOP DENSITY"] = check_slop(text, lex)
+        results["FINGERPRINT"] = check_fingerprint(text)
+        results["VOICE"] = check_voice(text, lex)
     scores = [results[c][0] for c in CHECKS]
     # The weakest check drags the verdict: a detector only needs one signal.
     overall = statistics.mean(scores) * 0.6 + min(scores) * 0.4
@@ -174,19 +269,25 @@ def bar(score, width=24):
     return "#" * filled + "." * (width - filled)
 
 
-def render(results, overall, verdict, label=None, out=sys.stdout):
-    title = "AI DETECTION PANEL" + (f"  -  {label}" if label else "")
+def render(results, overall, verdict, label=None, out=sys.stdout, lang="en"):
+    tr = lang == "tr"
+    nm = (lambda c: TR_NAMES[c]) if tr else (lambda c: c)
+    title = ("YAPAY ZEKA TESPİT PANELİ" if tr else "AI DETECTION PANEL") + (f"  -  {label}" if label else "")
+    width = 17 if tr else 13
     print("\n" + title, file=out)
     print("=" * max(len(title), 62), file=out)
     for name in CHECKS:
         score, detail = results[name]
-        print(f"  {name:<13} {bar(score)} {score:5.1f}", file=out)
-        print(f"  {'':<13} {detail}", file=out)
+        print(f"  {nm(name):<{width}} {bar(score)} {score:5.1f}", file=out)
+        print(f"  {'':<{width}} {detail}", file=out)
     print("-" * 62, file=out)
-    print(f"  {'HUMAN SCORE':<13} {bar(overall)} {overall:5.1f}   {verdict}", file=out)
+    label_score = "İNSAN PUANI" if tr else "HUMAN SCORE"
+    shown = TR_VERDICT[verdict] if tr else verdict
+    print(f"  {label_score:<{width}} {bar(overall)} {overall:5.1f}   {shown}", file=out)
     if verdict != "PASS":
-        weakest = min(CHECKS, key=lambda c: results[c][0])
-        print(f"\n  Weakest signal: {weakest}. Fix that first.", file=out)
+        weakest = nm(min(CHECKS, key=lambda c: results[c][0]))
+        print(f"\n  En zayıf sinyal: {weakest}. Önce onu düzelt." if tr else
+              f"\n  Weakest signal: {weakest}. Fix that first.", file=out)
     print("", file=out)
 
 
@@ -195,19 +296,24 @@ def main():
     ap.add_argument("input", nargs="?", default="-", help="file, or - for stdin")
     ap.add_argument("compare", nargs="?", help="second file, to show before/after")
     ap.add_argument("--json", action="store_true")
-    ap.add_argument("--lexicon", default=LEX)
+    ap.add_argument("--lexicon", default=None, help="path to slop.json / slop_tr.json")
+    ap.add_argument("--lang", choices=["auto", "en", "tr"], default="auto",
+                    help="language of the draft (default: auto-detect)")
     args = ap.parse_args()
 
-    lex = json.load(open(args.lexicon, encoding="utf-8"))
     read = lambda p: sys.stdin.read() if p == "-" else open(p, encoding="utf-8").read()
 
     targets = [(args.input, read(args.input))]
     if args.compare:
         targets.append((args.compare, read(args.compare)))
 
+    lang = trhuman.detect("\n".join(t for _, t in targets), args.lang)
+    lex = json.load(open(args.lexicon or (trhuman.LEX_TR if lang == "tr" else LEX),
+                         encoding="utf-8"))
+
     payload = []
     for name, text in targets:
-        results, overall, verdict = run(text, lex)
+        results, overall, verdict = run(text, lex, lang)
         payload.append({
             "source": name,
             "checks": {k: {"score": round(v[0], 1), "detail": v[1]} for k, v in results.items()},
@@ -216,17 +322,20 @@ def main():
         })
 
     if args.json:
-        print(json.dumps(payload if args.compare else payload[0], indent=2))
+        print(json.dumps(payload if args.compare else payload[0], indent=2, ensure_ascii=False))
         return
 
     for (name, text), p in zip(targets, payload):
-        results, overall, verdict = run(text, lex)
-        render(results, overall, verdict, label=os.path.basename(name) if args.compare else None)
+        results, overall, verdict = run(text, lex, lang)
+        render(results, overall, verdict, label=os.path.basename(name) if args.compare else None,
+               lang=lang)
     if args.compare:
         a, b = payload
         delta = b["human_score"] - a["human_score"]
-        print(f"  {a['human_score']:.1f} {a['verdict']}  ->  "
-              f"{b['human_score']:.1f} {b['verdict']}   ({delta:+.1f})\n")
+        va, vb = ((TR_VERDICT[a["verdict"]], TR_VERDICT[b["verdict"]]) if lang == "tr"
+                  else (a["verdict"], b["verdict"]))
+        print(f"  {a['human_score']:.1f} {va}  ->  "
+              f"{b['human_score']:.1f} {vb}   ({delta:+.1f})\n")
 
     sys.exit(0 if payload[-1]["verdict"] == "PASS" else 1)
 

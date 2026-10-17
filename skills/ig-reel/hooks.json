@@ -1,6 +1,7 @@
 {
   "version": "1.0",
   "note": "26 hook formulas for Reels. A Reel has two hooks that fire at the same time and they are not the same sentence: the first thing you say, and the first thing on screen. The spoken hook has about two seconds. The on-screen hook has about one, because it is read before it is heard. Every formula here carries a template, a filled example, the on-screen version, what it is for, and the way it usually gets ruined. Each formula also carries a `match` regex, so the same vocabulary can name a hook found in the wild and not only write a new one. Walk them in `classify_order`, which is most specific first, case-insensitive.",
+  "note_tr": "Türkçe alanlar (*_tr): her formülün Türkçe adı, şablonu, örneği, ekran yazısı, ne için iyi olduğu ve tuzağı. Örnekler kelime kelime çeviri değil, bir Türk içerik üreticisinin söyleyeceği şekilde yeniden yazıldı. Türkçe yazarken formülü al, örneği kopyalama. match_tr, Türkçe küçük harfe çevrilmiş (I -> ı, İ -> i) hook'a uygulanır; ig-viral/swipe.py Türkçe hook'ları bununla sınıflandırır.",
   "rules": [
     "Write the spoken line and the on-screen line separately. On screen is the shorter, blunter one, six words or fewer, no punctuation it does not need.",
     "No setup. The video starts at the sentence you would normally reach at second six.",
@@ -8,6 +9,15 @@
     "The first frame is a hook too. A static talking head at 0:00 with no motion and no text is three hooks wasted.",
     "If the hook would work for anyone else in your niche, it is not your hook. Put the thing only you can say in it.",
     "A hook promises something. Deliver it before the halfway mark or the retention you bought gets handed back."
+  ],
+  "rules_tr": [
+    "Konuşulan hook ile ekran yazısını ayrı yaz. Ekrandaki daha kısa ve sert olanı: altı kelime ya da daha az, Türkçede tercihen üç-dört.",
+    "Giriş yok. Video, normalde altıncı saniyede söyleyeceğin cümleyle başlar.",
+    "Rakamı söyle. 'Çok' bir rakam değil, 'epey zaman' da değil. Para TL ile: 18.000 TL, %40, 2,5 saat.",
+    "İlk kare de bir hook'tur. 0:00'da hareketsiz, yazısız bir konuşan kafa, üç hook'u boşa harcamaktır.",
+    "Hook nişindeki herkes için işe yarıyorsa senin hook'un değil. İçine sadece senin söyleyebileceğin şeyi koy.",
+    "Hook bir şey vaat eder. Videonun yarısına gelmeden teslim et, yoksa satın aldığın izlenme süresi geri gider.",
+    "Konuşma dili, yazı dili değil: 'yaptım', 'gerçekleştirdim' değil. Fiil sonda, yük kelime başta."
   ],
   "hooks": [
     {
@@ -18,7 +28,14 @@
       "on_screen": "$18,000 MISTAKE",
       "best_for": "Trust, fast. People finish the videos where you are the one who looks bad.",
       "trap": "A fake cost. 'It cost me my peace of mind' is not a number and everybody can hear that.",
-      "match": "\\$\\s?\\d[\\d,]*\\s+(?:is|was) what\\b|\\bcost (?:me|us|him|her|them)\\b|\\blost\\b[^.!?]{0,20}\\$\\s?\\d"
+      "match": "\\$\\s?\\d[\\d,]*\\s+(?:is|was) what\\b|\\bcost (?:me|us|him|her|them)\\b|\\blost\\b[^.!?]{0,20}\\$\\s?\\d",
+      "name_tr": "Maliyet İtirafı",
+      "template_tr": "{Tek bir hata} bana {somut tutar}a mal oldu.",
+      "example_tr": "Tek bir eksik madde bana 18.000 TL'ye mal oldu.",
+      "on_screen_tr": "18.000 TL'LİK HATA",
+      "best_for_tr": "Hızlı güven. İnsanlar, kötü görünen kişinin sen olduğu videoları sonuna kadar izler.",
+      "trap_tr": "Sahte bedel. 'Huzuruma mal oldu' bir rakam değil ve bunu herkes duyar.",
+      "match_tr": "\\bmal ol|\\bkaybett|\\bbana\\b[^.!?]{0,25}(?:tl\\b|lira|₺|dolar)|(?:₺|\\btl\\b|lira)[^.!?]{0,20}(?:zarar|kayb|gitti)"
     },
     {
       "id": 2,
@@ -28,7 +45,14 @@
       "on_screen": "STOP POSTING DAILY",
       "best_for": "Saves and arguments. The imperative gets attention that a statement does not.",
       "trap": "Telling people to stop doing something nobody does. The habit has to be one the viewer recognises in themselves.",
-      "match": "^\\s*(?:stop|quit|never|don'?t|dont|please)\\b[^.!?]{0,30}\\b(?:do|be|make|buy|use|start|say|post|send|take|charge)?\\b|\\b(?:do not|don'?t|dont|never) (?:do|be|make|buy|use|start|say|post|take)\\b|\\bquit your\\b"
+      "match": "^\\s*(?:stop|quit|never|don'?t|dont|please)\\b[^.!?]{0,30}\\b(?:do|be|make|buy|use|start|say|post|send|take|charge)?\\b|\\b(?:do not|don'?t|dont|never) (?:do|be|make|buy|use|start|say|post|take)\\b|\\bquit your\\b",
+      "name_tr": "Olumsuz Emir",
+      "template_tr": "{Yaygın alışkanlığı} bırak. Yerine {alternatifi} yap.",
+      "example_tr": "Günde üç post atmayı bırak. İki tane at, sonra bir saat boyunca her yoruma cevap ver.",
+      "on_screen_tr": "GÜNDE 3 POSTU BIRAK",
+      "best_for_tr": "Kaydetme ve tartışma. Emir kipi, düz bir cümlenin alamadığı dikkati alır.",
+      "trap_tr": "Kimsenin yapmadığı bir şeyi bıraktırmak. Alışkanlık, izleyicinin kendinde tanıdığı bir şey olmalı.",
+      "match_tr": "\\bbırak(?:ın)?\\b|^\\s*sakın\\b|^\\s*\\w+m[ae]y[ıi]n\\b"
     },
     {
       "id": 3,
@@ -38,7 +62,14 @@
       "on_screen": "YOUR FIRST 30 WILL FLOP",
       "best_for": "New audiences. It positions you as the person who says the quiet part.",
       "trap": "Picking a truth everybody already says. If the comments are agreeing before you finish, it was not a secret.",
-      "match": "\\b(?:nobody|no one|nobody ever)\\s+(?:ever\\s+)?(?:tells|told|talks|talked|says|said|mentions|teaches)\\b|\\bwhat (?:nobody|no one) (?:tells|says)\\b"
+      "match": "\\b(?:nobody|no one|nobody ever)\\s+(?:ever\\s+)?(?:tells|told|talks|talked|says|said|mentions|teaches)\\b|\\bwhat (?:nobody|no one) (?:tells|says)\\b",
+      "name_tr": "Kimse Söylemiyor",
+      "template_tr": "Kimse sana {istediği şeyle ilgili rahatsız edici gerçeği} söylemiyor.",
+      "example_tr": "Kimse sana ilk 30 reels'inin tutmayacağını söylemiyor.",
+      "on_screen_tr": "İLK 30'U TUTMAYACAK",
+      "best_for_tr": "Yeni kitleler. Seni, herkesin sustuğu şeyi söyleyen kişi konumuna koyar.",
+      "trap_tr": "Herkesin zaten söylediği bir gerçeği seçmek. Daha bitirmeden yorumlar onaylıyorsa, sır değildi.",
+      "match_tr": "\\bkimse\\b[^.!?]{0,40}(?:söyle|anlat|bahset)m"
     },
     {
       "id": 4,
@@ -48,7 +79,14 @@
       "on_screen": "$2,000 -> $12",
       "best_for": "Demos and tool videos. The price gap does the work.",
       "trap": "Overstating the replacement. If it replaced 60% of the job, say 60%, or the comments will say it for you.",
-      "match": "\\breplaced?\\b[^.!?]*\\$\\s?\\d|\\$\\s?\\d[^.!?]*\\breplaced?\\b|\\binstead of (?:paying|hiring)\\b"
+      "match": "\\breplaced?\\b[^.!?]*\\$\\s?\\d|\\$\\s?\\d[^.!?]*\\breplaced?\\b|\\binstead of (?:paying|hiring)\\b",
+      "name_tr": "Yerine Geçen",
+      "template_tr": "{Bu şey}, {pahalı şeyin} yerini {fiyat}a aldı.",
+      "example_tr": "Ayda 400 TL'lik bu araç, ayda 60.000 TL ödediğim editörün yerini aldı.",
+      "on_screen_tr": "60.000 TL → 400 TL",
+      "best_for_tr": "Demo ve araç videoları. İşi fiyat farkı yapar.",
+      "trap_tr": "Yerine geçmeyi abartmak. İşin %60'ını yapıyorsa %60 de, yoksa yorumlar senin yerine söyler.",
+      "match_tr": "\\byerini (?:aldı|alıyor|tuttu|alır)|\\byerine geçti"
     },
     {
       "id": 5,
@@ -58,7 +96,14 @@
       "on_screen": "5 HOURS -> 20 MIN",
       "best_for": "Process videos where the payoff is speed. Reads instantly on screen.",
       "trap": "A ratio nobody believes. 40 hours to 4 seconds gets treated as a lie even when it is true.",
-      "match": "\\bused to take\\b|\\bnow (?:it )?(?:only )?takes?\\b|\\btakes? (?:me )?\\d+\\s*(?:sec|second|min|minute|hour|hr)"
+      "match": "\\bused to take\\b|\\bnow (?:it )?(?:only )?takes?\\b|\\btakes? (?:me )?\\d+\\s*(?:sec|second|min|minute|hour|hr)",
+      "name_tr": "Zaman Çöküşü",
+      "template_tr": "Bu iş bana {uzun süre} sürüyordu. Şimdi {kısa süre}.",
+      "example_tr": "Teklif hazırlamak beş saatimi alıyordu. Şimdi yirmi dakika.",
+      "on_screen_tr": "5 SAAT → 20 DK",
+      "best_for_tr": "Getirinin hız olduğu süreç videoları. Ekranda anında okunur.",
+      "trap_tr": "Kimsenin inanmadığı bir oran. 40 saatten 4 saniyeye, doğru olsa bile yalan sanılır.",
+      "match_tr": "(?:sürüyordu|alıyordu|harcıyordum|uğraşıyordum)[^.!?]*[.!?]?\\s*(?:şimdi|artık)|\\b(?:şimdi|artık)\\b[^.!?]{0,25}(?:dakika|saniye|\\bdk\\b)"
     },
     {
       "id": 6,
@@ -68,7 +113,14 @@
       "on_screen": "60 DAYS. REAL NUMBERS.",
       "best_for": "Experiments. Pairs with a screen recording of the real dashboard, which is the whole value.",
       "trap": "Not showing the screen. A numbers video with no screen recording is a numbers claim.",
-      "match": "\\bi\\s+\\w+(?:ed)?\\s+[^.!?]{0,30}\\bfor\\s+\\d+\\s+(?:days?|weeks?|months?|years?)\\b|\\bhere (?:are|is) (?:the|my)\\b[^.!?]*\\bnumbers\\b|\\bwe(?:'ll| will)? do \\$\\s?\\d"
+      "match": "\\bi\\s+\\w+(?:ed)?\\s+[^.!?]{0,30}\\bfor\\s+\\d+\\s+(?:days?|weeks?|months?|years?)\\b|\\bhere (?:are|is) (?:the|my)\\b[^.!?]*\\bnumbers\\b|\\bwe(?:'ll| will)? do \\$\\s?\\d",
+      "name_tr": "Dekont",
+      "template_tr": "{N gün} boyunca {şeyi} yaptım. İşte gerçek rakamlar.",
+      "example_tr": "60 gün boyunca her gün bir reels attım. DM'lerime ne oldu, gerçek rakamlar burada.",
+      "on_screen_tr": "60 GÜN. GERÇEK RAKAMLAR.",
+      "best_for_tr": "Deneyler. Gerçek panelin ekran kaydıyla eşleşir; asıl değer de odur.",
+      "trap_tr": "Ekranı göstermemek. Ekran kaydı olmayan bir rakam videosu, sadece bir rakam iddiasıdır.",
+      "match_tr": "\\d+\\s?(?:gün|hafta|ay)\\s(?:boyunca|her gün)|\\bgerçek rakam|\\bişte (?:sonuçlar|rakamlar)"
     },
     {
       "id": 7,
@@ -78,7 +130,14 @@
       "on_screen": "YOUR CAPTIONS ARE CUT",
       "best_for": "Teaching. The 'not your fault' half stops it reading as an insult, which is what kills this one.",
       "trap": "Skipping the absolution. 'You are doing it wrong' on its own makes people leave rather than learn.",
-      "match": "\\b(?:big(?:gest)?|common|the) mistake\\b|\\bmistake (?:that|people|i)\\b|\\byou'?(?:re| are) doing\\b[^.!?]*\\bwrong\\b|\\bdoing (?:it|this) wrong\\b"
+      "match": "\\b(?:big(?:gest)?|common|the) mistake\\b|\\bmistake (?:that|people|i)\\b|\\byou'?(?:re| are) doing\\b[^.!?]*\\bwrong\\b|\\bdoing (?:it|this) wrong\\b",
+      "name_tr": "Yanlış Yol, Doğru Yol",
+      "template_tr": "{Şeyi} yanlış yapıyorsun ve bu senin suçun değil. {Çözüm}.",
+      "example_tr": "Açıklamaları yanlış yazıyorsun ve bu senin suçun değil. Instagram ilk satırdan sonrasını gizliyor.",
+      "on_screen_tr": "AÇIKLAMAN KESİLİYOR",
+      "best_for_tr": "Öğretmek. 'Senin suçun değil' kısmı cümlenin hakaret gibi okunmasını engeller; bu formülü öldüren şey de odur.",
+      "trap_tr": "Teselliyi atlamak. Tek başına 'yanlış yapıyorsun' insanları öğrenmek yerine çıkıp gitmeye iter.",
+      "match_tr": "\\byanlış \\w+(?:yorsun|yorsunuz)|\\bsenin suçun değil|\\bsizin suçunuz değil"
     },
     {
       "id": 8,
@@ -88,7 +147,14 @@
       "on_screen": "6 YEARS INSIDE",
       "best_for": "Authority without a credential slide. Works only if the years are real.",
       "trap": "Promising a secret and delivering the brochure. The comments are merciless about this one.",
-      "match": "\\bi (?:spent|worked|ran|was|have been)\\b[^.!?]*\\b\\d+\\s*\\+?\\s*years?\\b|\\bwe never (?:told|said|showed)\\b|\\bnobody (?:puts|tells you about)\\b|\\bi (?:sell|sold|run)\\b[^.!?]*\\$\\s?\\d"
+      "match": "\\bi (?:spent|worked|ran|was|have been)\\b[^.!?]*\\b\\d+\\s*\\+?\\s*years?\\b|\\bwe never (?:told|said|showed)\\b|\\bnobody (?:puts|tells you about)\\b|\\bi (?:sell|sold|run)\\b[^.!?]*\\$\\s?\\d",
+      "name_tr": "İçeriden Sızıntı",
+      "template_tr": "{N yıl} {o işin içinde} çalıştım. İşte hiç yüksek sesle söylemediğimiz şey.",
+      "example_tr": "Altı yıl ajans paketleri sattım. Teklife asla yazmadığımız şeyi anlatıyorum.",
+      "on_screen_tr": "6 YIL İÇERİDE",
+      "best_for_tr": "Diploma slaytı olmadan otorite. Yalnızca yıllar gerçekse işe yarar.",
+      "trap_tr": "Sır vaat edip broşür okumak. Yorumlar bu konuda acımasızdır.",
+      "match_tr": "(?:\\d+|\\b(?:iki|üç|dört|beş|altı|yedi|sekiz|dokuz|on)\\b)\\s?(?:yıl|sene)\\b[^.!?]{0,40}(?:çalıştım|sattım|yaptım|geçirdim)|\\b(?:asla|hiç) (?:söylemediğimiz|söylemeyiz|yazmadığımız|anlatmadığımız)|\\biçeriden\\b"
     },
     {
       "id": 9,
@@ -98,7 +164,14 @@
       "on_screen": "STEAL THIS",
       "best_for": "Saves and sends, which are the two metrics that move reach the most.",
       "trap": "The artifact not being on screen. If they cannot screenshot it, there is nothing to steal.",
-      "match": "^\\s*steal\\b|\\bsteal (?:this|these|my)\\b|^\\s*(?:here'?s|this is) (?:the|my) (?:exact|literal)\\b"
+      "match": "^\\s*steal\\b|\\bsteal (?:this|these|my)\\b|^\\s*(?:here'?s|this is) (?:the|my) (?:exact|literal)\\b",
+      "name_tr": "Çal Bunu",
+      "template_tr": "Bu {şeyi} çal. Oturtmam {süre} sürdü.",
+      "example_tr": "Bu dört satırlık takip mesajını çal. İki yılımı ve bir sürü kaçan müşteriyi aldı.",
+      "on_screen_tr": "BUNU ÇAL",
+      "best_for_tr": "Kaydetme ve gönderme: erişimi en çok oynatan iki metrik.",
+      "trap_tr": "Şeyin ekranda olmaması. Ekran görüntüsü alamıyorlarsa çalınacak bir şey de yoktur.",
+      "match_tr": "\\bçal(?:ın)?\\b|\\bkopyala(?:yın)?\\b|\\bbedavaya al\\b"
     },
     {
       "id": 10,
@@ -108,7 +181,14 @@
       "on_screen": "VIEWS BUT NO FOLLOWERS?",
       "best_for": "Qualifying hard. Fewer people stay, and the ones who do are the ones who buy.",
       "trap": "A situation so broad it qualifies nobody. 'If you want to grow' is not a situation.",
-      "match": "^\\s*if (?:you|i|we|your|my|they)\\b"
+      "match": "^\\s*if (?:you|i|we|your|my|they)\\b",
+      "name_tr": "Eğer Buysa, İzle",
+      "template_tr": "{Özel durum} yaşıyorsan, sonraki {kısa süre} bunu çözüyor.",
+      "example_tr": "Reels'lerin izleniyor ama takipçi gelmiyorsa, sonraki 40 saniye bunu çözüyor.",
+      "on_screen_tr": "İZLENME VAR, TAKİPÇİ YOK?",
+      "best_for_tr": "Sert eleme. Daha az kişi kalır, kalanlar da satın alanlardır.",
+      "trap_tr": "Kimseyi elemeyecek kadar geniş bir durum. 'Büyümek istiyorsan' bir durum değil.",
+      "match_tr": "\\bsonraki \\d+ (?:saniye|dakika)|\\w(?:sa|se)(?:n|nız|niz)?,[^.!?]{0,40}(?:çözüyor|tam sana göre|izle)"
     },
     {
       "id": 11,
@@ -118,7 +198,14 @@
       "on_screen": "5 EDITS. #4 IS THE ONE.",
       "best_for": "Retention through the middle: naming a favourite gives people a reason to stay past three.",
       "trap": "N above seven. Nobody believes you have nine good ones, and you do not.",
-      "match": "^\\s*(?:here are\\s+)?\\d+\\s+\\w+|\\bnumber \\d+\\b|\\b(?:three|four|five|seven|ten)\\s+\\w+\\s+(?:every|that|you)\\b"
+      "match": "^\\s*(?:here are\\s+)?\\d+\\s+\\w+|\\bnumber \\d+\\b|\\b(?:three|four|five|seven|ten)\\s+\\w+\\s+(?:every|that|you)\\b",
+      "name_tr": "Numaralı, Bir Favoriyle",
+      "template_tr": "{Sonucu} getiren {N} {şey}. {k}. maddeyi kimse kullanmıyor.",
+      "example_tr": "Kaydetmeyi ikiye katlayan beş açıklama düzeltmesi. Dördüncüsünü kimse yapmıyor.",
+      "on_screen_tr": "5 DÜZELTME. 4. OLAN ASIL.",
+      "best_for_tr": "Ortada izlenme: bir favori söylemek, üçüncü maddeden sonra kalmak için bir sebep verir.",
+      "trap_tr": "Yediden fazla madde. Dokuz iyi maddeye kimse inanmaz, zaten yoktur.",
+      "match_tr": "\\b(?:birinci|ikinci|üçüncü|dördüncü|beşinci|altıncı|yedinci|\\d+\\.)\\w*\\s?(?:madde\\w*|numara\\w*)?[^.!?]{0,30}(?:kimse|asıl|en iyi)"
     },
     {
       "id": 12,
@@ -128,7 +215,14 @@
       "on_screen": "\"I HATE BEING ON CAMERA\"",
       "best_for": "Selling to the people who already said no once.",
       "trap": "Inventing the objection. Pull it verbatim from a DM or a comment, including the bad grammar.",
-      "match": "^\\s*[\\\"“'][^\\\"”']{5,120}[\\\"”'][,.]?\\s*(?:fine|ok|okay|sure|right|here)"
+      "match": "^\\s*[\\\"“'][^\\\"”']{5,120}[\\\"”'][,.]?\\s*(?:fine|ok|okay|sure|right|here)",
+      "name_tr": "İtiraz",
+      "template_tr": "\"{Gerçekten söyledikleri itiraz}.\" Tamam. İşte yine de işe yarayan versiyon.",
+      "example_tr": "\"Kameraya çıkmak istemiyorum.\" Tamam. Yüzünü göstermeden de satan versiyon bu.",
+      "on_screen_tr": "\"KAMERADAN NEFRET EDİYORUM\"",
+      "best_for_tr": "Bir kere 'hayır' demiş kişilere satmak.",
+      "trap_tr": "İtirazı uydurmak. Bir DM'den ya da yorumdan kelimesi kelimesine al, bozuk dilbilgisiyle birlikte.",
+      "match_tr": "^\\s*[\\\"“][^\\\"”]{5,80}[\\\"”]\\s*(?:tamam|peki|olsun|anlıyorum)"
     },
     {
       "id": 13,
@@ -138,7 +232,14 @@
       "on_screen": "MARCH  /  NOW",
       "best_for": "Anything visual. The cut between the two frames is the hook, the words are secondary.",
       "trap": "Three levers. Name one thing that changed or the transformation stops being believable.",
-      "match": "\\b(?:this|that) was\\b[^.!?]*[.!?]\\s*(?:this|that) is\\b|\\bbefore\\b[^.!?]*\\bafter\\b|\\bi (?:look|looked) back at\\b"
+      "match": "\\b(?:this|that) was\\b[^.!?]*[.!?]\\s*(?:this|that) is\\b|\\bbefore\\b[^.!?]*\\bafter\\b|\\bi (?:look|looked) back at\\b",
+      "name_tr": "Önce ve Sonra, Ekranda",
+      "template_tr": "{Eskiyi göster}. {Yeniyi göster}. {Değişen tek şey hakkında bir cümle}.",
+      "example_tr": "Mart'ta profilim buydu. Şimdi bu. Sadece isim alanını değiştirdim.",
+      "on_screen_tr": "MART  /  ŞİMDİ",
+      "best_for_tr": "Görsel olan her şey. İki kare arasındaki kesme hook'un kendisidir, kelimeler ikinci planda.",
+      "trap_tr": "Üç kaldıraç. Değişen tek bir şeyi söyle, yoksa dönüşüm inandırıcılığını kaybeder.",
+      "match_tr": "\\b(?:ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık|geçen yıl|bir yıl önce)\\S*[^.!?]{0,30}(?:buydu|böyleydi)[^.!?]*[.!?]\\s*(?:şimdi|bugün)"
     },
     {
       "id": 14,
@@ -148,7 +249,14 @@
       "on_screen": "PHOTOGRAPHERS UNDER $2K",
       "best_for": "Cutting a broad audience down to the one that converts. Send rate goes up because people tag each other.",
       "trap": "A group so large it is not a callout. 'Entrepreneurs' is not a group.",
-      "match": "^\\s*(?:every|all|any)\\s+\\w+|^\\s*[a-z][\\w ]{2,28}(?:ers|ists|ors|ants)\\b\\s*[,:]|^\\s*for (?:viewers|people|anyone|those|everyone)\\b|^\\s*(?:attention|listen up)\\b"
+      "match": "^\\s*(?:every|all|any)\\s+\\w+|^\\s*[a-z][\\w ]{2,28}(?:ers|ists|ors|ants)\\b\\s*[,:]|^\\s*for (?:viewers|people|anyone|those|everyone)\\b|^\\s*(?:attention|listen up)\\b",
+      "name_tr": "Seslenme",
+      "template_tr": "{Belirli grup}, kaçtığınız şey tam olarak bu.",
+      "example_tr": "Çekim başına 20.000 TL'nin altında fiyat veren fotoğrafçılar: kaçtığınız fiyat sayfası bu.",
+      "on_screen_tr": "20 BİN TL ALTI FOTOĞRAFÇILAR",
+      "best_for_tr": "Geniş kitleyi dönüşüm getiren kitleye indirmek. İnsanlar birbirini etiketlediği için gönderme oranı artar.",
+      "trap_tr": "Seslenme sayılmayacak kadar büyük bir grup. 'Girişimciler' bir grup değil.",
+      "match_tr": "^\\s*[^.!?,:]{3,60}(?:lar|ler)\\s?[,:]\\s|\\bkaçtığınız\\b|\\bkaçtığın\\b"
     },
     {
       "id": 15,
@@ -158,7 +266,14 @@
       "on_screen": "47 FLOPS, THEN THIS",
       "best_for": "People at the start, which is most of the audience. High comment rate.",
       "trap": "Making the change sound like luck. If the answer is 'I got lucky', there is no video.",
-      "match": "\\bmy first\\s+\\d+\\b|\\bfirst\\s+\\d+\\s+(?:reels?|videos?|posts?|clients?|months?)\\b"
+      "match": "\\bmy first\\s+\\d+\\b|\\bfirst\\s+\\d+\\s+(?:reels?|videos?|posts?|clients?|months?)\\b",
+      "name_tr": "Çuvallama Kaydı",
+      "template_tr": "İlk {N} {denemem} hiçbir şey yapmadı. {N+1}. denemede değişen şey bu.",
+      "example_tr": "İlk 47 reels'im ortalama 300 izlenme aldı. 48. olan 400.000 yaptı. Tek bir şey farklıydı.",
+      "on_screen_tr": "47 ÇUVALLAMA, SONRA BU",
+      "best_for_tr": "Yolun başındakiler, ki kitlenin çoğu onlar. Yorum oranı yüksek.",
+      "trap_tr": "Değişimi şansa bağlamak. Cevap 'şanslıydım' ise ortada video yok.",
+      "match_tr": "\\bilk \\d+\\s?\\S*[^.!?]{0,40}(?:tutmadı|işe yaramadı|hiçbir şey yapmadı|çuvalladı|izlenme)"
     },
     {
       "id": 16,
@@ -168,7 +283,14 @@
       "on_screen": "ASKED EVERY WEEK",
       "best_for": "Search. A question typed the way people type it is what Instagram search is matching against.",
       "trap": "Tidying the question up. The value is that it is in their words, typos and all.",
-      "match": "^\\s*[\\\"“']?(?:how|what|what'?s|why|when|where|who|which|can|should|do|does|did|is|are|have you|would you)\\b[^?]{3,110}\\?"
+      "match": "^\\s*[\\\"“']?(?:how|what|what'?s|why|when|where|who|which|can|should|do|does|did|is|are|have you|would you)\\b[^?]{3,110}\\?",
+      "name_tr": "Kelimesi Kelimesine Soru",
+      "template_tr": "\"{Sorulduğu gibi soru}\" Bunu her hafta soruyorlar.",
+      "example_tr": "\"Nefret etmeden düzenli nasıl paylaşım yaparım?\" Bunu her hafta soruyorlar.",
+      "on_screen_tr": "HER HAFTA SORULUYOR",
+      "best_for_tr": "Arama. İnsanların yazdığı gibi yazılmış bir soru, Instagram aramasının eşleştirdiği şeydir.",
+      "trap_tr": "Soruyu temizlemek. Değeri, onların kelimeleriyle olmasıdır; yazım hatalarıyla birlikte.",
+      "match_tr": "^\\s*[\\\"“][^\\\"”]+\\?[\\\"”]|\\bher hafta (?:soruyorlar|soruluyor|bu soru)"
     },
     {
       "id": 17,
@@ -178,7 +300,14 @@
       "on_screen": "CAROUSELS vs REELS",
       "best_for": "Comments. People arrive already holding an opinion, which is the point.",
       "trap": "Refusing to pick. A comparison with a diplomatic ending is a video with no ending.",
-      "match": "\\b(?:vs\\.?|versus)\\b|\\bdifferences? between\\b|\\b(?:a|the) or (?:b|the)\\b"
+      "match": "\\b(?:vs\\.?|versus)\\b|\\bdifferences? between\\b|\\b(?:a|the) or (?:b|the)\\b",
+      "name_tr": "Karşı Karşıya",
+      "template_tr": "{A} mı, {B} mi? İkisini de {süre} denedim, biri açık ara önde.",
+      "example_tr": "Carousel mi, reels mi? İkisini de 90 gün denedim, yakın bile değil.",
+      "on_screen_tr": "CAROUSEL vs REELS",
+      "best_for_tr": "Yorum. İnsanlar zaten bir fikirle gelir, amaç da bu.",
+      "trap_tr": "Taraf tutmamak. Diplomatik biten bir karşılaştırma, sonu olmayan bir videodur.",
+      "match_tr": "\\b(?:vs\\.?|versus)\\b|\\bm[ıiuü],?\\s\\S+(?:\\s\\S+)?\\sm[ıiuü]\\?|\\bikisini de\\b[^.!?]{0,30}denedim"
     },
     {
       "id": 18,
@@ -188,7 +317,14 @@
       "on_screen": "WATCH THIS",
       "best_for": "Screen recordings and anything with a visible result. No setup at all, the hand is already moving.",
       "trap": "A result that takes twelve seconds to arrive. If the payoff is slow, cut to it and show the wait afterwards.",
-      "match": "^\\s*watch (?:what|this|me)\\b|^\\s*(?:let me|lemme) show you\\b|^\\s*repeat after me\\b"
+      "match": "^\\s*watch (?:what|this|me)\\b|^\\s*(?:let me|lemme) show you\\b|^\\s*repeat after me\\b",
+      "name_tr": "Soğuk Açılış Demo",
+      "template_tr": "{Hareketin ortasından başla, iş zaten yapılıyor.} Bak ne oluyor.",
+      "example_tr": "Rakibin açıklamasını buna yapıştırınca ne oluyor, izle.",
+      "on_screen_tr": "İZLE",
+      "best_for_tr": "Ekran kayıtları ve sonucu görünen her şey. Hiç hazırlık yok, el zaten hareket ediyor.",
+      "trap_tr": "Gelmesi on iki saniye süren bir sonuç. Getiri yavaşsa önce ona kes, bekleyişi sonra göster.",
+      "match_tr": "^\\s*(?:izle|bak|şuna bak|şimdi bak)\\b|\\bne oluyor,? (?:izle|bak)|\\bne olduğuna bak"
     },
     {
       "id": 19,
@@ -198,7 +334,14 @@
       "on_screen": "BEFORE YOU POST AGAIN",
       "best_for": "Urgency that is real. Platform changes, seasonal windows, policy updates.",
       "trap": "Manufactured urgency. One fake deadline and every future one is discounted.",
-      "match": "\\bbefore (?:you|it|they|the)\\b[^.!?]*\\b(?:change|changes|end|ends|close|closes|expires|goes)\\b|\\bchanges on\\b|\\bby 20\\d\\d\\b"
+      "match": "\\bbefore (?:you|it|they|the)\\b[^.!?]*\\b(?:change|changes|end|ends|close|closes|expires|goes)\\b|\\bchanges on\\b|\\bby 20\\d\\d\\b",
+      "name_tr": "Son Tarih",
+      "template_tr": "{Şey} {tarihte} değişiyor. Ondan önce {eylemi} yap.",
+      "example_tr": "Reels attığın an profil ızgaran kırpılıyor. Bir daha paylaşmadan önce kapakları düzelt.",
+      "on_screen_tr": "TEKRAR PAYLAŞMADAN ÖNCE",
+      "best_for_tr": "Gerçek aciliyet. Platform değişiklikleri, sezonluk pencereler, kural güncellemeleri.",
+      "trap_tr": "Uydurma aciliyet. Bir sahte son tarih, sonrakilerin hepsini değersizleştirir.",
+      "match_tr": "\\b(?:değişiyor|bitiyor|kalkıyor)\\b|\\w+m[ae]dan önce\\b|\\bson gün\\b"
     },
     {
       "id": 20,
@@ -208,7 +351,14 @@
       "on_screen": "YOU DON'T NEED A NICHE",
       "best_for": "Relief. Very high save rate, because it removes a blocker rather than adding a task.",
       "trap": "Removing the blocker and putting nothing in its place. The second half is the whole video.",
-      "match": "\\byou (?:do not|don'?t|dont) need\\b|\\bstop (?:trying to|worrying about)\\b"
+      "match": "\\byou (?:do not|don'?t|dont) need\\b|\\bstop (?:trying to|worrying about)\\b",
+      "name_tr": "İzin",
+      "template_tr": "{Herkesin gerekli dediği şeye} ihtiyacın yok.",
+      "example_tr": "Bir nişe ihtiyacın yok. Adını verebileceğin tek bir kişiye ihtiyacın var.",
+      "on_screen_tr": "NİŞE İHTİYACIN YOK",
+      "best_for_tr": "Rahatlama. Kaydetme oranı çok yüksek, çünkü yeni bir görev eklemiyor, bir engeli kaldırıyor.",
+      "trap_tr": "Engeli kaldırıp yerine hiçbir şey koymamak. İkinci yarı, videonun tamamıdır.",
+      "match_tr": "\\bihtiyac(?:ın|ınız) yok|\\bgerek yok\\b|\\bzorunda değil(?:sin|siniz)"
     },
     {
       "id": 21,
@@ -218,7 +368,14 @@
       "on_screen": "HE ASKED FOR A REFUND",
       "best_for": "Stories. Starting mid-scene makes the viewer feel they arrived late, which is a reason to stay.",
       "trap": "Never going back to fill in the gap. Deliver the setup by second eight or it reads as a mistake.",
-      "match": "^\\s*(?:\\.\\.\\.|…)|^\\s*(?:and (?:that'?s|that is|then) when|so (?:he|she|they) (?:said|asked))\\b|^\\s*(?:uh|um)\\b"
+      "match": "^\\s*(?:\\.\\.\\.|…)|^\\s*(?:and (?:that'?s|that is|then) when|so (?:he|she|they) (?:said|asked))\\b|^\\s*(?:uh|um)\\b",
+      "name_tr": "Cümle Ortasından Başlamak",
+      "template_tr": "...ve tam o anda {dönüm noktası}.",
+      "example_tr": "...ve tam o anda müşteri parasını geri istedi. Onayladıktan üç gün sonra.",
+      "on_screen_tr": "PARASINI GERİ İSTEDİ",
+      "best_for_tr": "Hikâyeler. Sahnenin ortasından başlamak izleyiciye geç kalmış hissi verir, bu da kalmak için bir sebeptir.",
+      "trap_tr": "Boşluğu hiç doldurmamak. Girişi sekizinci saniyeye kadar ver, yoksa hata gibi okunur.",
+      "match_tr": "^\\s*(?:\\.\\.\\.|…)|^\\s*(?:ve|ve tam|işte tam) o (?:an|sırada)"
     },
     {
       "id": 22,
@@ -228,7 +385,14 @@
       "on_screen": "NICE GUYS FINISH FIRST",
       "best_for": "Comments. The viewer has to stop and check whether they misheard you.",
       "trap": "Flipping a saying nobody says. The original has to be a reflex, or the inversion is just a sentence.",
-      "match": "^\\s*[A-Za-z][\\w' ]{2,34}\\b(?:finish|finishes|win|wins|lose|loses|beats?|is|are)\\s+(?:first|last|dead|wrong|right|better|overrated|underrated)\\b"
+      "match": "^\\s*[A-Za-z][\\w' ]{2,34}\\b(?:finish|finishes|win|wins|lose|loses|beats?|is|are)\\s+(?:first|last|dead|wrong|right|better|overrated|underrated)\\b",
+      "name_tr": "Tersine Çevirme",
+      "template_tr": "{Bilinen bir sözün tersi.}",
+      "example_tr": "Sabreden derviş muradına ermez.",
+      "on_screen_tr": "SABREDEN DERVİŞ MURADINA ERMEZ",
+      "best_for_tr": "Yorum. İzleyici durup yanlış duyup duymadığını kontrol etmek zorunda kalır.",
+      "trap_tr": "Kimsenin söylemediği bir sözü ters çevirmek. Orijinali refleks olmalı, yoksa ters hali sadece bir cümledir.",
+      "match_tr": "^\\s*(?:sabreden|damlaya damlaya|ağaç yaş|erken kalkan|bin bilsen|az olsun|ne ekersen|işten artmaz|akıl akıldan|aç ayı|üzüm üzüme|dost acı)\\b"
     },
     {
       "id": 23,
@@ -238,7 +402,14 @@
       "on_screen": "33% NEVER READ AGAIN",
       "best_for": "Sends. A number a person can repeat at dinner gets sent to somebody.",
       "trap": "A statistic you cannot source. Say where it came from in the video or do not use it.",
-      "match": "^\\s*\\d[\\d,.]*\\s?%|\\b\\d[\\d,.]*\\s?%\\s+of\\b"
+      "match": "^\\s*\\d[\\d,.]*\\s?%|\\b\\d[\\d,.]*\\s?%\\s+of\\b",
+      "name_tr": "İstatistik",
+      "template_tr": "{Grubun} %{N}'i {şaşırtıcı gerçek}.",
+      "example_tr": "Takipçilerimin %62'si videolarımı sesi kapalı izliyor. Insights ekranı burada.",
+      "on_screen_tr": "%62 SESSİZ İZLİYOR",
+      "best_for_tr": "Gönderme. Akşam yemeğinde tekrarlanabilecek bir rakam birilerine gönderilir.",
+      "trap_tr": "Kaynağını gösteremediğin bir istatistik. Nereden geldiğini videoda söyle ya da kullanma.",
+      "match_tr": "%\\s?\\d+|\\d+\\s?%|\\byüzde \\w+|\\b(?:her|\\d+) \\w+ (?:kişiden|kişinin)"
     },
     {
       "id": 24,
@@ -248,7 +419,14 @@
       "on_screen": "THE NEW ONE",
       "best_for": "Anything physical or visual. The object is the hook and the words are captions on it.",
       "trap": "Holding the thing up without saying what it changes. A reveal with no stake is an advert.",
-      "match": "^\\s*(?:so,?\\s+)?(?:this|these|here) (?:is|are)\\s+(?:the\\s+)?(?:new|my new)\\b|^\\s*(?:so,?\\s+)?this (?:new|tiny|little)\\b|^\\s*this \\w+ has (?:the|a)\\b"
+      "match": "^\\s*(?:so,?\\s+)?(?:this|these|here) (?:is|are)\\s+(?:the\\s+)?(?:new|my new)\\b|^\\s*(?:so,?\\s+)?this (?:new|tiny|little)\\b|^\\s*this \\w+ has (?:the|a)\\b",
+      "name_tr": "Tanıtım",
+      "template_tr": "Bu, yeni {şey}.",
+      "example_tr": "Bu, Sony'nin yeni kompakt makinesi ve en nefret ettiğim şeyi düzeltiyor.",
+      "on_screen_tr": "YENİSİ GELDİ",
+      "best_for_tr": "Fiziksel ya da görsel her şey. Nesnenin kendisi hook'tur, kelimeler onun üstündeki altyazıdır.",
+      "trap_tr": "Neyi değiştirdiğini söylemeden ürünü havaya kaldırmak. Bedeli olmayan bir tanıtım reklamdır.",
+      "match_tr": "^\\s*(?:bu|işte),? (?:\\S+ )?(?:yeni|yepyeni)\\b"
     },
     {
       "id": 25,
@@ -258,7 +436,14 @@
       "on_screen": "1M SUBS IN ONE MONTH",
       "best_for": "Proof when the user does not have their own number yet. Third-person is allowed if it is true.",
       "trap": "No name and no link. An anonymous miracle is a rumour.",
-      "match": "\\bthere (?:was|is) (?:one|a|this)\\b|\\b(?:one|a) (?:guy|girl|creator|student|founder|kid|client|friend) (?:i know |who |that )(?:\\w+ed|grew|made|built|went|took|got|hit)\\b|\\bwe had a new\\b"
+      "match": "\\bthere (?:was|is) (?:one|a|this)\\b|\\b(?:one|a) (?:guy|girl|creator|student|founder|kid|client|friend) (?:i know |who |that )(?:\\w+ed|grew|made|built|went|took|got|hit)\\b|\\bwe had a new\\b",
+      "name_tr": "Başkasının Sonucu",
+      "template_tr": "{Süre} içinde {sonuca} ulaşan bir {kişi} var.",
+      "example_tr": "Tek bir ayda bir milyon abone kazanan bir içerik üreticisi var.",
+      "on_screen_tr": "TEK AYDA 1 MİLYON ABONE",
+      "best_for_tr": "Kullanıcının henüz kendi rakamı yokken kanıt. Doğruysa üçüncü şahıs serbest.",
+      "trap_tr": "İsim yok, link yok. İsimsiz bir mucize dedikodudur.",
+      "match_tr": "\\btek (?:bir )?(?:ayda|haftada|yılda|günde)\\b|\\b(?:kazanan|ulaşan|yapan) bir \\S+(?: \\S+)? (?:var|vardı)\\b"
     },
     {
       "id": 26,
@@ -268,7 +453,14 @@
       "on_screen": "THE FASTEST WAY",
       "best_for": "One-claim videos with no story attached. It is the most common shape in the wild and the easiest to write badly.",
       "trap": "A superlative with a soft answer. If the second half is 'consistency', you have said nothing and the comments will tell you.",
-      "match": "^\\s*(?:the\\s+)?(?:fastest|quickest|best|worst|biggest|greatest|easiest|hardest|only|number one|#1|most important)\\s+\\w+|\\bthe (?:fastest|best|worst|biggest|greatest|only) way to\\b"
+      "match": "^\\s*(?:the\\s+)?(?:fastest|quickest|best|worst|biggest|greatest|easiest|hardest|only|number one|#1|most important)\\s+\\w+|\\bthe (?:fastest|best|worst|biggest|greatest|only) way to\\b",
+      "name_tr": "Üstünlük",
+      "template_tr": "{En hızlı / en büyük / tek} {şey}, {cevap}.",
+      "example_tr": "Özgüvenin en hızlı yolu, tartışamayacağın kanıtlar biriktirmek.",
+      "on_screen_tr": "EN HIZLI YOL",
+      "best_for_tr": "Hikâyesi olmayan tek iddialı videolar. Sahada en yaygın kalıp ve kötü yazması en kolay olanı.",
+      "trap_tr": "Yumuşak cevaplı bir üstünlük iddiası. İkinci yarı 'istikrar' ise hiçbir şey söylememişsindir, yorumlar da bunu söyler.",
+      "match_tr": "\\ben (?:hızlı|kolay|büyük|iyi|kötü|ucuz|basit|önemli|kısa)\\b|\\btek (?:yol|yolu)\\b"
     }
   ],
   "classify_order": [
